@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - License Manager</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .license-list {
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-gen {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+        }
+
+        .btn-gen:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <h1>🔑 License Manager (Admin)</h1>
+
+        <div class="admin-form">
+            <h3>Generate New Key</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="adminPass" placeholder="Admin Password" class="search-input"
+                    style="width: 200px;">
+                <input type="text" id="custName" placeholder="Customer Name" class="search-input">
+                <input type="number" id="days" value="30" class="search-input" style="width: 80px;">
+                <button class="btn-gen" onclick="generateKey()">Generate</button>
+            </div>
+            <div id="newKeyResult" style="color: var(--green); font-weight: bold;"></div>
+        </div>
+
+        <div class="license-list">
+            <h3>Existing Licenses</h3>
+            <button onclick="loadLicenses()" class="btn-test">Refresh List</button>
+            <table id="licenseTable">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>User</th>
+                        <th>Expiry</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function generateKey() {
+            const adminPass = document.getElementById('adminPass').value;
+            const username = document.getElementById('custName').value;
+            const days = parseInt(document.getElementById('days').value);
+
+            const response = await fetch('/api/admin/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Admin-Password': adminPass
+                },
+                body: JSON.stringify({ username, days })
+            });
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('newKeyResult').textContent = `Key Generated: ${data.key} (Expires: ${data.expiry})`;
+                loadLicenses();
+            } else {
+                alert(data.message || 'Failed');
+            }
+        }
+
+        async function loadLicenses() {
+            const adminPass = document.getElementById('adminPass').value;
+            const response = await fetch('/api/admin/list', {
+                headers: { 'Admin-Password': adminPass }
+            });
+            const data = await response.json();
+            if (data.success) {
+                const tbody = document.querySelector('#licenseTable tbody');
+                tbody.innerHTML = '';
+                for (const [key, details] of Object.entries(data.licenses)) {
+                    const expiryDate = new Date(details.expiry);
+                    const isExpired = new Date() > expiryDate;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><code>${key}</code></td>
+                            <td>${details.user}</td>
+                            <td>${details.expiry}</td>
+                            <td style="color: ${isExpired ? 'red' : 'green'}">${isExpired ? 'Expired' : 'Active'}</td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

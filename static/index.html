@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔁 PACPL – Stocks Level Pro 1.0</title>
+    <link rel="stylesheet" href="/static/style.css?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">🔁 PACPL – Stocks Level Pro 1.0</h1>
+                <p class="subtitle">Intraday Options Level Scanner - CE/PE Signals</p>
+            </div>
+            <div class="header-actions">
+                <input type="text" class="search-input" placeholder="Search Symbol (e.g. RELIANCE)">
+                <div class="auto-scan-toggle">
+                    <span>AUTO SCAN</span>
+                    <label class="switch">
+                        <input type="checkbox" id="autoScan" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <select class="time-select" id="timeframeSelect">
+                    <option value="1m" selected>1 Minute</option>
+                    <option value="2m">2 Minutes</option>
+                </select>
+                <button class="btn-scan" id="scanBtn">
+                    <span>Search</span>
+                </button>
+                <button class="btn-test" id="testMockBtn">Test Mock</button>
+                <button class="btn-nifty">Scan F&O Stocks</button>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-label">TOTAL SCANNED</div>
+                <div class="stat-value" id="totalScanned">473</div>
+            </div>
+            <div class="stat-box stat-detected">
+                <div class="stat-label">DETECTED SIGNALS</div>
+                <div class="stat-value" id="detectedSignals">53</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">LAST SCANNED</div>
+                <div class="stat-value" id="lastScanned">09:30:27</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="ce">CE (Call)</button>
+            <button class="tab" data-tab="pe">PE (Put)</button>
+            <div class="last-scanned">Last scanned: <span id="footerTime">Never</span></div>
+        </div>
+
+        <!-- Signals Grid -->
+        <div class="signals-container" id="signalsContainer">
+            <div class="no-signals">
+                <div class="no-signals-icon">📭</div>
+                <h3>No Active Signals</h3>
+                <p>Click "Scan Nifty 500" to start scanning...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- License Overlay -->
+    <div id="licenseOverlay" class="license-overlay" style="display: none;">
+        <div class="license-card">
+            <div class="license-header">
+                <h2>🔐 Register License</h2>
+                <p>Welcome to PACPL Stocks Level Pro. Please enter your license key to continue.</p>
+            </div>
+            <div class="license-body">
+                <div class="input-group">
+                    <label>License Key</label>
+                    <input type="text" id="licenseKeyInput" placeholder="PACPL-XXXX-XXXX">
+                </div>
+                <button id="activateBtn" class="btn-activate">Activate Access</button>
+            </div>
+            <div id="licenseError" class="license-error"></div>
+            <div class="license-footer">
+                <p>Need a key? Contact the provider for a 1-month license.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js?v=3"></script>
+</body>
+
+</html>
