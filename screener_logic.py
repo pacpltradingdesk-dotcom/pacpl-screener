@@ -513,9 +513,9 @@ def scan_stocks_generator(stock_list, timeframes=None):
     print(f"DEBUG: Starting generator for {total_stocks} stocks")
     yield f"data: {json.dumps({'type': 'start', 'total': total_stocks})}\n\n"
     
-    # Use ThreadPoolExecutor for parallel scanning
-    # Increased workers to 30 to handle Nifty 500 efficiently
-    with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
+# Use ThreadPoolExecutor for parallel scanning
+    # Reduced workers for Render Free Tier (Memory & CPU limits)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         future_to_stock = {
             executor.submit(scan_stock_dual_tf, symbol, timeframes): symbol 
             for symbol in stock_list
@@ -558,4 +558,5 @@ def scan_stocks_generator(stock_list, timeframes=None):
     # Send completion event
     print("DEBUG: Generator finished")
     yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
 
